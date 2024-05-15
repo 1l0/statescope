@@ -17,13 +17,13 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: StateScope(
+      home: Provider(
         lazy: false,
         create: () => AuthState(),
         child: Builder(builder: (context) {
           final authState = context.watch<AuthState>();
           if (authState.isLoggedIn) {
-            return StateScope(
+            return Provider(
               create: () => AppState(),
               child: const HomePage(title: 'Inherited Counter Demo'),
             );
@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
                   itemBuilder: (context) => [
                     const PopupMenuItem(child: Text('Logout'), value: true),
                   ],
-                  onSelected: (_) => context.watch<AuthState>().logout(),
+                  onSelected: (_) => context.read<AuthState>().logout(),
                 ),
               ],
             );
