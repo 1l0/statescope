@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 class AuthState extends ChangeNotifier {
   var _isLoggedIn = false;
+
   bool get isLoggedIn => _isLoggedIn;
 
-  void login() {
-    _isLoggedIn = true;
+  set isLoggedIn(bool b) {
+    _isLoggedIn = b;
     notifyListeners();
   }
 
+  void login() {
+    isLoggedIn = true;
+  }
+
   void logout() {
-    _isLoggedIn = false;
-    notifyListeners();
+    isLoggedIn = false;
   }
 }
 

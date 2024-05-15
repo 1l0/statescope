@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:simple_provider_demo/states.dart';
 import 'package:simple_state_management/simple_provider.dart';
+
+import 'states.dart';
 
 void main() {
   runApp(const App());
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +17,13 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Provider(
+      home: StateScope(
+        lazy: false,
         create: () => AuthState(),
         child: Builder(builder: (context) {
-          if (context.watch<AuthState>().isLoggedIn) {
-            return Provider(
+          final authState = context.watch<AuthState>();
+          if (authState.isLoggedIn) {
+            return StateScope(
               create: () => AppState(),
               child: const HomePage(title: 'Inherited Counter Demo'),
             );
@@ -34,7 +37,7 @@ class App extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({super.key, required this.title});
 
   final String title;
 
@@ -54,7 +57,7 @@ class HomePage extends StatelessWidget {
                   itemBuilder: (context) => [
                     const PopupMenuItem(child: Text('Logout'), value: true),
                   ],
-                  onSelected: (value) => context.read<AuthState>().logout,
+                  onSelected: (_) => context.watch<AuthState>().logout(),
                 ),
               ],
             );
@@ -69,7 +72,6 @@ class HomePage extends StatelessWidget {
             Builder(builder: (context) {
               return Text(
                 context.watch<AppState>().count.toString(),
-                style: Theme.of(context).textTheme.headline4,
               );
             }),
           ],
@@ -89,7 +91,7 @@ class HomePage extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {

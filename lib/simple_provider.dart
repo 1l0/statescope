@@ -4,26 +4,24 @@ library simple_provider;
 import 'package:flutter/material.dart';
 
 /// A [Widget] that provides that handles creation and disposal of a [ChangeNotifier].
-class Provider<T extends ChangeNotifier> extends StatefulWidget {
-  /// Creates a [Provider] that handles data management for an [InheritedNotifier].
-  const Provider(
-      {Key? key,
+class StateScope<T extends ChangeNotifier> extends StatefulWidget {
+  /// Creates a [StateScope] that handles data management for an [InheritedNotifier].
+  const StateScope(
+      {super.key,
       required T Function() create,
       this.lazy = true,
       required this.child})
       : _create = create,
-        _value = null,
-        super(key: key);
+        _value = null;
 
-  /// Creates a [Provider] from an existing [ChangeNotifer], allowing the passing
+  /// Creates a [StateScope] from an existing [ChangeNotifer], allowing the passing
   /// of data between [BuildContext]s.
-  const Provider.value({Key? key, required T value, required this.child})
+  const StateScope.value({super.key, required T value, required this.child})
       : lazy = false,
         _create = null,
-        _value = value,
-        super(key: key);
+        _value = value;
 
-  /// The child widget of the [Provider]. All dependents of the [Provider]
+  /// The child widget of the [StateScope]. All dependents of the [StateScope]
   /// should be below this in the [Widget] tree.
   final Widget child;
 
@@ -34,14 +32,14 @@ class Provider<T extends ChangeNotifier> extends StatefulWidget {
   /// Denotes whether the [ChangeNotifier] should be instantiated lazily (default).
   /// If lazily loaded, the [ChangeNotifier] will not be created until it is accessed
   /// for the first time. Set to false to create the [ChangeNotifier] as soon as
-  /// the [Provider] is created.
+  /// the [StateScope] is created.
   final bool lazy;
 
   @override
-  State<Provider<T>> createState() => _ProviderState<T>();
+  State<StateScope<T>> createState() => _StateScopeState<T>();
 }
 
-class _ProviderState<T extends ChangeNotifier> extends State<Provider<T>> {
+class _StateScopeState<T extends ChangeNotifier> extends State<StateScope<T>> {
   T? notifier;
 
   // lazily load
