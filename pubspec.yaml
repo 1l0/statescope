@@ -1,11 +1,11 @@
-name: simple_state_management
+name: statescope
 description: A Flutter package providing simple & performant state management using [InheritedNotifier].
 version: 1.0.0
 
 publish_to: "none"
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.4.0-282.3.beta
 
 dependencies:
   flutter:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_state_management/simple_provider.dart';
+import 'package:statescope/statescope.dart';
 
 import 'states.dart';
 
@@ -14,15 +14,15 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Inherited Counter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Provider(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
+      home: StateScope(
         create: () => AuthState(),
         child: Builder(builder: (context) {
           final authState = context.watch<AuthState>();
           if (authState.isLoggedIn) {
-            return Provider(
+            return StateScope(
               create: () => AppState(),
               child: const HomePage(title: 'Inherited Counter Demo'),
             );
