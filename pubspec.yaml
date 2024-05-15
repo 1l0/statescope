@@ -1,6 +1,6 @@
 name: simple_state_management
 description: A Flutter package providing simple & performant state management using [InheritedNotifier].
-version: 0.0.1
+version: 1.0.0
 
 publish_to: "none"
 

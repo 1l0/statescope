@@ -18,7 +18,6 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Provider(
-        lazy: false,
         create: () => AuthState(),
         child: Builder(builder: (context) {
           final authState = context.watch<AuthState>();
