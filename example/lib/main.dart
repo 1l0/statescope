@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:statescope/statescope.dart';
 
@@ -92,33 +94,43 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthState>();
     return Scaffold(
       body: Center(
-        child: OutlinedButton(
-          onPressed: context.read<AuthState>().login,
-          child: const Text('Login'),
-        ),
+        child: authState.isLogging
+            ? const CircularProgressIndicator()
+            : OutlinedButton(
+                onPressed: context.read<AuthState>().login,
+                child: const Text('Login'),
+              ),
       ),
     );
   }
 }
 
+enum _AuthState { loggedOut, logging, loggedIn }
+
 class AuthState extends ChangeNotifier {
-  var _isLoggedIn = false;
+  var _authState = _AuthState.loggedOut;
 
-  bool get isLoggedIn => _isLoggedIn;
+  bool get isLogging => _authState == _AuthState.logging;
+  bool get isLoggedIn => _authState == _AuthState.loggedIn;
 
-  set isLoggedIn(bool b) {
-    _isLoggedIn = b;
+  void login() {
+    unawaited(_login());
+  }
+
+  Future<void> _login() async {
+    _authState = _AuthState.logging;
+    notifyListeners();
+    await Future.delayed(const Duration(seconds: 1));
+    _authState = _AuthState.loggedIn;
     notifyListeners();
   }
 
-  void login() {
-    isLoggedIn = true;
-  }
-
   void logout() {
-    isLoggedIn = false;
+    _authState = _AuthState.loggedOut;
+    notifyListeners();
   }
 }
 

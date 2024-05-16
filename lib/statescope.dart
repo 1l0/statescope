@@ -83,7 +83,7 @@ extension ReadContext on BuildContext {
   /// [Widget]s accessing the data this way will NOT rebuild when the data changes.
   T read<T extends ChangeNotifier>() {
     final inheritedNotifier =
-        findAncestorWidgetOfExactType<_InheritedNotifier<T>>();
+        getInheritedWidgetOfExactType<_InheritedNotifier<T>>();
     assert(
         inheritedNotifier != null,
         'ChangeNotifier not found in context. '
