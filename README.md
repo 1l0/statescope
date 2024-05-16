@@ -1,4 +1,6 @@
-# Simple State Management
+# StateScope
+
+A fork of [Simple State Management](https://github.com/theLee3/simple_state_management)
 
 A state management solution that is light weight, easy to use, and performant. Uses Flutter's [InheritedNotifier](https://api.flutter.dev/flutter/widgets/InheritedNotifier-class.html).
 
@@ -10,19 +12,19 @@ A state management solution that is light weight, easy to use, and performant. U
 
 ## Usage
 
-Store state in a class that extends [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html), then create with `Provider`.
+Store state in a class that extends [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html), then create with `StateScope`.
 
 ```dart
-Provider(
+StateScope(
     create: () => AppState(),
     child: ...
 );
 ```
 
-Data is lazily-loaded by default. To disable and load immediately when `Provider` is built, set `lazy` to `false`.
+Data is lazily-loaded by default. To disable and load immediately when `StateScope` is built, set `lazy` to `false`.
 
 ```dart
-Provider(
+StateScope(
     create: () => AppState(),
     lazy: false,
     child: ...
@@ -39,13 +41,13 @@ context.watch<AppState>();
 context.read<AppState>();
 ```
 
-Pass data that has already been instantiated between `BuildContext`s by using `Provider.value`.
+Pass data that has already been instantiated between `BuildContext`s by using `StateScope.value`.
 
 ```dart
 final appState = context.read<AppState>();
 Navigator.of(context).push(
     MaterialPageRoute(builder: (context) {
-        return Provider.value(
+        return StateScope.value(
             value: appState,
             child: ...,
         );
