@@ -1,3 +1,5 @@
+[![pub package](https://img.shields.io/pub/v/statescope.svg)](https://pub.dev/packages/statescope)
+
 # StateScope
 
 A fork of [Simple State Management](https://github.com/theLee3/simple_state_management)
