@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:statescope/statescope.dart';
@@ -99,9 +100,22 @@ class LoginPage extends StatelessWidget {
       body: Center(
         child: authState.isLogging
             ? const CircularProgressIndicator()
-            : OutlinedButton(
-                onPressed: context.read<AuthState>().login,
-                child: const Text('Login'),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  OutlinedButton(
+                    onPressed: context.read<AuthState>().login,
+                    child: const Text('Login'),
+                  ),
+                  if (authState.error != null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        authState.error!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
               ),
       ),
     );
@@ -112,6 +126,7 @@ enum _AuthState { loggedOut, logging, loggedIn }
 
 class AuthState extends ChangeNotifier {
   var _authState = _AuthState.loggedOut;
+  String? error;
 
   bool get isLogging => _authState == _AuthState.logging;
   bool get isLoggedIn => _authState == _AuthState.loggedIn;
@@ -121,9 +136,22 @@ class AuthState extends ChangeNotifier {
   }
 
   Future<void> _login() async {
+    error = null;
     _authState = _AuthState.logging;
     notifyListeners();
-    await Future.delayed(const Duration(seconds: 1));
+
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      final rand = Random().nextDouble();
+      if (rand > 0.66) {
+        throw Exception("random error example");
+      }
+    } catch (e) {
+      error = e.toString();
+      logout();
+      return;
+    }
+
     _authState = _AuthState.loggedIn;
     notifyListeners();
   }
