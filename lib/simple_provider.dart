@@ -69,11 +69,10 @@ class _ProviderState<T extends ChangeNotifier> extends State<Provider<T>> {
 class _InheritedNotifier<T extends ChangeNotifier>
     extends InheritedNotifier<T> {
   const _InheritedNotifier(
-      {Key? key,
-      required T? notifier,
+      {super.key,
+      required super.notifier,
       required this.load,
-      required Widget child})
-      : super(key: key, notifier: notifier, child: child);
+      required super.child});
 
   final T Function() load;
 }
