@@ -1,10 +1,11 @@
 name: statescope
-description: A Flutter package providing simple & performant state management using [InheritedNotifier].
-version: 1.0.0
+description: Simple & performant state management using [InheritedNotifier].
+version: 1.0.2
 repository: "https://github.com/1l0/statescope"
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
