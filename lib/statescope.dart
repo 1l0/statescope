@@ -16,6 +16,7 @@ class StateScope<T extends ChangeNotifier> extends StatefulWidget {
 
   /// Creates a [StateScope] from an existing [ChangeNotifer], allowing the passing
   /// of data between [BuildContext]s.
+  @Deprecated('just use StateScope')
   const StateScope.value({super.key, required T value, required this.child})
       : lazy = false,
         _create = null,
