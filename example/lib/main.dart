@@ -14,10 +14,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Inherited Counter',
+      title: 'Authed Counter',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
+      debugShowCheckedModeBanner: false,
       home: StateScope(
         creator: () => AuthState(),
         child: Builder(builder: (context) {
@@ -25,7 +26,7 @@ class App extends StatelessWidget {
           if (authState.isLoggedIn) {
             return StateScope(
               creator: () => AppState(),
-              child: const HomePage(title: 'Inherited Counter Demo'),
+              child: const HomePage(title: 'Authed Counter'),
             );
           } else {
             return const LoginPage();
@@ -43,25 +44,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Builder(
-          builder: ((context) {
-            final appState = context.watch<AppState>();
-            return AppBar(
-              title: Text(title, style: TextStyle(color: appState.textColor)),
-              backgroundColor: appState.backgroundColor,
-              actions: [
-                PopupMenuButton(
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: true, child: Text('Logout')),
-                  ],
-                  onSelected: (_) => context.read<AuthState>().logout(),
-                ),
-              ],
-            );
-          }),
+        child: AppBar(
+          title: Text(title, style: TextStyle(color: appState.textColor)),
+          backgroundColor: appState.backgroundColor,
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  context.read<AuthState>().logout();
+                },
+                child: const Text('Logout')),
+          ],
         ),
       ),
       body: Center(
@@ -69,23 +65,20 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            Builder(builder: (context) {
-              return Text(
-                context.watch<AppState>().count.toString(),
-              );
-            }),
+            Text(
+              appState.count.toString(),
+            ),
           ],
         ),
       ),
-      floatingActionButton: Builder(builder: (context) {
-        final appState = context.watch<AppState>();
-        return FloatingActionButton(
-          onPressed: appState.incrementCounter,
-          tooltip: 'Increment',
-          backgroundColor: appState.backgroundColor,
-          child: Icon(Icons.add, color: appState.textColor),
-        );
-      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.read<AppState>().incrementCounter();
+        },
+        tooltip: 'Increment',
+        backgroundColor: appState.backgroundColor,
+        child: Icon(Icons.add, color: appState.textColor),
+      ),
     );
   }
 }
@@ -104,7 +97,9 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OutlinedButton(
-                    onPressed: context.read<AuthState>().login,
+                    onPressed: () {
+                      context.read<AuthState>().login();
+                    },
                     child: const Text('Login'),
                   ),
                   if (authState.error != null)
@@ -141,13 +136,13 @@ class AuthState extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 500));
       final rand = Random().nextDouble();
-      if (rand > 0.66) {
-        throw Exception("random error example");
+      if (rand > 0.9) {
+        throw Exception("intentional random error example");
       }
     } catch (e) {
-      error = e.toString();
+      error = 'Login failed: ${e.toString()}';
       logout();
       return;
     }
