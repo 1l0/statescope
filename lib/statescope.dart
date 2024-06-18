@@ -8,27 +8,16 @@ class StateScope<T extends ChangeNotifier> extends StatefulWidget {
   /// Creates a [StateScope] that handles data management for an [InheritedNotifier].
   const StateScope(
       {super.key,
-      required T Function() create,
+      required T Function() creator,
       this.lazy = true,
       required this.child})
-      : _create = create,
-        _value = null;
-
-  /// Creates a [StateScope] from an existing [ChangeNotifer], allowing the passing
-  /// of data between [BuildContext]s.
-  @Deprecated('just use StateScope')
-  const StateScope.value({super.key, required T value, required this.child})
-      : lazy = false,
-        _create = null,
-        _value = value;
+      : _creator = creator;
 
   /// The child widget of the [StateScope]. All dependents of the [StateScope]
   /// should be below this in the [Widget] tree.
   final Widget child;
 
-  final T Function()? _create;
-
-  final T? _value;
+  final T Function() _creator;
 
   /// Denotes whether the [ChangeNotifier] should be instantiated lazily (default).
   /// If lazily loaded, the [ChangeNotifier] will not be created until it is accessed
@@ -46,7 +35,7 @@ class _StateScopeState<T extends ChangeNotifier> extends State<StateScope<T>> {
   // lazily load
   T load() {
     if (notifier == null) {
-      notifier = widget._create!();
+      notifier = widget._creator();
       Future.delayed(Duration.zero, () => setState(() {}));
     }
     return notifier!;
@@ -54,14 +43,14 @@ class _StateScopeState<T extends ChangeNotifier> extends State<StateScope<T>> {
 
   @override
   void dispose() {
-    if (widget._value == null) notifier?.dispose();
+    notifier?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Create [ChangeNotifier] on first build if not lazy and a value is not provided.
-    if (!widget.lazy) notifier ??= widget._value ?? widget._create!();
+    // Create [ChangeNotifier] on first build if not lazy.
+    if (!widget.lazy) notifier ??= widget._creator();
     return _InheritedNotifier<T>(
         notifier: notifier, load: load, child: widget.child);
   }
@@ -85,16 +74,17 @@ extension ReadContext on BuildContext {
   T read<T extends ChangeNotifier>() {
     final inheritedNotifier =
         getInheritedWidgetOfExactType<_InheritedNotifier<T>>();
-    assert(
-        inheritedNotifier != null,
-        'ChangeNotifier not found in context. '
-        'Ensure that the ChangeNotifier is created by a StateScope above this BuildContext.\n'
-        'The most common cause of is using a BuildContext at the StateScope level rather than below it.\n'
-        'If you need to use the ChangeNotifier directly in the child parameter of the [StateScope], consider'
-        'wrapping the child in a Builder.');
+
+    if (inheritedNotifier == null) {
+      throw Exception('[${T.toString()}]  not found in context. '
+          'Ensure that the [${T.toString()}] is created by a [StateScope] above this [BuildContext].\n'
+          'The most common cause of is using a [BuildContext] at the [StateScope] level rather than below it.\n'
+          'If you need to use the [${T.toString()}]  directly in the child parameter of the [StateScope],\n'
+          'consider wrapping the child in a [Builder].');
+    }
 
     // Lazily load [ChangeNotifier] on first access if needed.
-    return inheritedNotifier!.notifier ?? inheritedNotifier.load();
+    return inheritedNotifier.notifier ?? inheritedNotifier.load();
   }
 
   /// Watches the state of the [ChangeNotifer], subscribing to updates.
@@ -102,15 +92,15 @@ extension ReadContext on BuildContext {
   T watch<T extends ChangeNotifier>() {
     final inheritedNotifier =
         dependOnInheritedWidgetOfExactType<_InheritedNotifier<T>>();
-    assert(
-        inheritedNotifier != null,
-        'ChangeNotifier not found in context. '
-        'Ensure that the [ChangeNotifier] is created by a [StateScope] above this [BuildContext].\n'
-        'The most common cause of is using a [BuildContext] at the [StateScope] level rather than below it.\n'
-        'If you need to use the [ChangeNotifier] directly in the child parameter of the [StateScope], consider'
-        'wrapping the child in a [Builder].');
 
+    if (inheritedNotifier == null) {
+      throw Exception('[${T.toString()}] not found in context. '
+          'Ensure that the [${T.toString()}] is created by a [StateScope] above this [BuildContext].\n'
+          'The most common cause of is using a [BuildContext] at the [StateScope] level rather than below it.\n'
+          'If you need to use the [${T.toString()}]  directly in the child parameter of the [StateScope],\n'
+          'consider wrapping the child in a [Builder].');
+    }
     // Lazily load [ChangeNotifier] on first access if needed.
-    return inheritedNotifier!.notifier ?? inheritedNotifier.load();
+    return inheritedNotifier.notifier ?? inheritedNotifier.load();
   }
 }

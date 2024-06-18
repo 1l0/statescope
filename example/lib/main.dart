@@ -19,12 +19,12 @@ class App extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
       home: StateScope(
-        create: () => AuthState(),
+        creator: () => AuthState(),
         child: Builder(builder: (context) {
           final authState = context.watch<AuthState>();
           if (authState.isLoggedIn) {
             return StateScope(
-              create: () => AppState(),
+              creator: () => AppState(),
               child: const HomePage(title: 'Inherited Counter Demo'),
             );
           } else {

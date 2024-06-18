@@ -4,55 +4,59 @@
 
 A fork of [Simple State Management](https://github.com/theLee3/simple_state_management)
 
-A state management solution that is light weight, easy to use, and performant. Uses Flutter's [InheritedNotifier](https://api.flutter.dev/flutter/widgets/InheritedNotifier-class.html).
+A dead simple state management using [InheritedNotifier](https://api.flutter.dev/flutter/widgets/InheritedNotifier-class.html).
 
 ## Features
 
 - Ridiculously easy to use.
 - Light weight & performant.
-- Lazily load data.
+- Lazily creating state.
 
 ## Usage
 
-Store state in a class that extends [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html), then create with `StateScope`.
+Store state in a class that extends [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html),
+
+```dart
+class Counter extends ChangeNotifier {
+    int count = 0;
+    void countUp() {
+        count++;
+        notifyListeners();
+    }
+}
+```
+
+then put it in the `creator` of `StateScope`.
 
 ```dart
 StateScope(
-    create: () => AppState(),
-    child: ...
+    creator: () => Counter(),
+    child: Builder(
+        builder: (context) {
+            // watch() DO rebuild when state changes.
+            final counter = context.watch<Counter>();
+            return Column(
+                children: [
+                    Text('${counter.count}'),
+                    ElevatedButton(
+                        onPressed:(){
+                            // read() DO NOT rebuild when state changes.
+                            context.read<Counter>().countUp();
+                        },
+                        child: Text('Cout up'),
+                    ),
+                ],
+            );
+        },
+    );
 );
 ```
 
-Data is lazily-loaded by default. To disable and load immediately when `StateScope` is built, set `lazy` to `false`.
+State is lazily-created by default. To create state immediately with `StateScope`, set `lazy` to `false`.
 
 ```dart
 StateScope(
-    create: () => AppState(),
     lazy: false,
-    child: ...
-);
-```
-
-Access state via `BuildContext` wherever needed.
-
-```dart
-// DO rebuild widget when state changes.
-context.watch<AppState>();
-
-// DO NOT rebuild widget when state changes.
-context.read<AppState>();
-```
-
-Pass data that has already been instantiated between `BuildContext`s by using `StateScope.value`.
-
-```dart
-final appState = context.read<AppState>();
-Navigator.of(context).push(
-    MaterialPageRoute(builder: (context) {
-        return StateScope.value(
-            value: appState,
-            child: ...,
-        );
-    }),
+    ...
 );
 ```
