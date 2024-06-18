@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Rewrite example
+
 ## 2.0.0
 
 * __BREAKING__ rename create => creator
