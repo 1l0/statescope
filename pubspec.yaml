@@ -1,6 +1,6 @@
 name: statescope
-description: Simple & performant state management using [InheritedNotifier].
-version: 2.0.1
+description: A dead simple state management using InheritedNotifier
+version: 2.0.2
 repository: "https://github.com/1l0/statescope"
 
 environment:

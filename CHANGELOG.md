@@ -1,6 +1,10 @@
+## 2.0.2
+
+* Change description.
+
 ## 2.0.1
 
-* Rewrite example
+* Rewrite example.
 
 ## 2.0.0
 
