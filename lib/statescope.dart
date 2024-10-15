@@ -10,14 +10,18 @@ class StateScope<T extends ChangeNotifier> extends StatefulWidget {
       {super.key,
       required T Function() creator,
       this.lazy = true,
-      required this.child})
-      : _creator = creator;
+      required this.child,
+      void Function(T)? onDispose})
+      : _creator = creator,
+        _onDispose = onDispose;
 
   /// The child widget of the [StateScope]. All dependents of the [StateScope]
   /// should be below this in the [Widget] tree.
   final Widget child;
 
   final T Function() _creator;
+
+  final void Function(T)? _onDispose;
 
   /// Denotes whether the [ChangeNotifier] should be instantiated lazily (default).
   /// If lazily loaded, the [ChangeNotifier] will not be created until it is accessed
@@ -43,6 +47,7 @@ class _StateScopeState<T extends ChangeNotifier> extends State<StateScope<T>> {
 
   @override
   void dispose() {
+    if (notifier != null) widget._onDispose?.call(notifier!);
     notifier?.dispose();
     super.dispose();
   }

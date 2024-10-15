@@ -1,10 +1,14 @@
+## 2.1.0
+
+* Added onDispose.
+
 ## 2.0.2
 
-* Change description.
+* Changed description.
 
 ## 2.0.1
 
-* Rewrite example.
+* Rewrote example.
 
 ## 2.0.0
 
