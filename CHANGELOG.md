@@ -1,3 +1,7 @@
+## 3.0.0
+
+* Removed onDispose.
+
 ## 2.1.0
 
 * Added onDispose.
